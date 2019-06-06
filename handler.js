@@ -1,30 +1,16 @@
 const aws = require("aws-sdk");
-//const querystring = require('querystring');
+const querystring = require("querystring");
 const ses = new aws.SES();
 const myEmail = process.env.EMAIL;
 const myDomain = process.env.DOMAIN;
+const redirectURL = process.env.REDIRECT_URL;
 
-/* exports.handler = async (event) => {
-  const response = {
+function redirectResponse() {
+  return {
     statusCode: 301,
     headers: {
-      Location: 'https://google.com'
+      Location: redirectURL
     }
-  };
-
-  return response;
-};
-*/
-
-function generateResponse(code, payload) {
-  return {
-    statusCode: code,
-    headers: {
-      "Access-Control-Allow-Origin": myDomain,
-      "Access-Control-Allow-Headers": "x-requested-with",
-      "Access-Control-Allow-Credentials": true
-    },
-    body: JSON.stringify(payload)
   };
 }
 
@@ -42,7 +28,7 @@ function generateError(code, err) {
 }
 
 function generateEmailParams(body) {
-  const { email, sender, message } = JSON.parse(body);
+  const { email, sender, message } = querystring.parse(body);
   console.log(email, sender, message);
   if (!(email && sender && message)) {
     throw new Error(
@@ -73,7 +59,7 @@ module.exports.send = async event => {
   try {
     const emailParams = generateEmailParams(event.body);
     const data = await ses.sendEmail(emailParams).promise();
-    return generateResponse(200, data);
+    return redirectResponse();
   } catch (err) {
     return generateError(500, err);
   }
