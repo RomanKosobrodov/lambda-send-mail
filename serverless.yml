@@ -12,6 +12,7 @@ provider:
     NODE_ENV: ${self:custom.secrets.NODE_ENV}
     EMAIL: ${self:custom.secrets.EMAIL}
     DOMAIN: ${self:custom.secrets.DOMAIN}
+    REDIRECT_URL: ${self:custom.secrets.REDIRECT_URL}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
